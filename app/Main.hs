@@ -47,18 +47,27 @@ getC pData n = sum [f i | i <- [0 .. length (points pData) - 1]]
         stepNorm :: Double
         stepNorm = 1.0 / fromIntegral (length $ points pData)
 
-getVector :: PointsData -> Int -> Int -> Complex Double
-getVector pData n i =
+type CCache = [Complex Double]
+
+cCache :: CCache -> Int -> Complex Double
+cCache cache n = cache !! (((length cache - 1) `div` 2) + n)
+
+buildCCache :: PointsData -> Int -> CCache
+buildCCache pData count = [getC pData n | n <- [-count .. count]]
+
+getVector :: PointsData -> Complex Double -> Int -> Int -> Complex Double
+getVector pData c n i =
   c * exp (((fromIntegral n * 2 * pi * tNorm) :+ 0) * (0 :+ 1))
   where
-    c = getC pData n
+    -- c = getC pData n
     tNorm :: Double
     tNorm = fromIntegral i / fromIntegral (length $ points pData)
 
 getPoints :: PointsData -> Int -> [Complex Double]
 getPoints pData count = [f i | i <- [0 .. length (points pData) - 1]]
   where
-    f i = sum ([getVector pData n i | n <- [-count .. count]]) * (stepNorm :+ 0)
+    cache = buildCCache pData count
+    f i = sum ([getVector pData (cCache cache n) n i | n <- [-count .. count]]) * (stepNorm :+ 0)
     stepNorm :: Double
     stepNorm = 1.0 / fromIntegral (length $ points pData)
 
