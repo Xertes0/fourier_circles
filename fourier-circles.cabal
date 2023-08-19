@@ -1,5 +1,5 @@
 cabal-version:      2.4
-name:               fourier-series
+name:               fourier-circles
 version:            0.1.0.0
 
 -- A short (one-line) description of the package.
@@ -9,7 +9,7 @@ version:            0.1.0.0
 -- description:
 
 -- A URL where users can report bugs.
--- bug-reports:
+bug-reports: https://github.com/Xertes0/fourier_circles/issues
 
 -- The license under which the package is released.
 license:            MIT
@@ -21,7 +21,7 @@ maintainer:         stefanskipiotr15@gmail.com
 -- category:
 extra-source-files: LICENSE.txt
 
-executable fourier-series
+executable fourier-circles
     main-is:          Main.hs
 
     -- Modules included in this executable, other than Main.
