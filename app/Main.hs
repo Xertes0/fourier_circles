@@ -100,7 +100,7 @@ vecAngle (x, y) = atan2 x y * 180 / pi
 
 doAnimate :: PointsData -> [(Float, Float)] -> CCache -> Float -> Picture
 doAnimate pData ps cache time =
-  scale (windowWidth / 2) (windowHeight / 2)
+  scale (windowWidth * 0.75) (windowHeight * 0.75)
     $ translate (-0.5) (-0.5)
     $ pictures (arrows ++ circles ++ [pointsPic])
   where
