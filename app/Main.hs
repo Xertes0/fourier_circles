@@ -80,7 +80,7 @@ getPoints pData cache count = [f i | i <- [0 .. length (points pData) - 1]]
 
 -- Actual count is this * 2 + 1
 circleCount :: Int
-circleCount = 10
+circleCount = 50
 
 arrow :: Picture
 arrow =
@@ -91,11 +91,11 @@ vecAngle (x, y) = atan2 x y * 180 / pi
 
 doAnimate :: PointsData -> [(Float, Float)] -> CCache -> Float -> Picture
 doAnimate pData ps cache time =
-  translate (-offsetX) (-offsetY) $ pictures (circles ++ arrows ++ [pointsPic])
+  translate (-offsetX) (-offsetY) $ pictures (arrows ++ circles ++ [pointsPic])
   where
     i = min (round (time * 50)) $ length (points pData) - 1
     (offsetX, offsetY) = ps !! i
-    pointsPic = line $ take (i + 1) ps
+    pointsPic = color (makeColorI 0xd7 0x00 0x00 0xff) $ line $ take (i + 1) ps
     buildVec n = ((vecx', vecy'), vecLength)
       where
         (vecx, vecy) = complexToPoint $ getVector pData (cCache cache n) n i
@@ -108,17 +108,21 @@ doAnimate pData ps cache time =
       tail
         $ zipWith
             (\(_, len) (x, y) ->
-               color (makeColor 0 0 0 0.25) $ translate x y $ circle len)
+               color (makeColorI 0x00 0xaf 0xaf 0xd0)
+                 $ translate x y
+                 $ circle len)
             vecs'
             posVecs
     arrows =
       tail
         $ zipWith
             (\((x1, y1), len) (x2, y2) ->
-               color (makeColor 0 0 0 0.8)
-                 $ translate x2 y2
+               translate x2 y2
                  $ scale len len
-                 $ rotate (vecAngle (x1, y1)) arrow -- line [(x2, y2), (x1 + x2, y1 + y2)])
+                 $ rotate (vecAngle (x1, y1))
+                 $ color
+                     (makeColorI 0x1c 0x1c 0x1c 0xff)
+                     arrow
              )
             vecs'
             posVecs
@@ -129,13 +133,9 @@ main = do
   let cache = buildCCache pData circleCount
   let ps =
         (\(x, y) -> (double2Float x, double2Float y))
-          -- . (\(x, y) -> (x * 150, y * 150))
           . complexToPoint
           <$> getPoints pData cache circleCount
   animate
     (InWindow "Fourier series" (round windowWidth, round windowHeight) (100, 100))
-    white
+    (makeColorI 0xe4 0xe4 0xe4 0xff)
     (doAnimate pData ps cache)
-  -- mapM_ (printPoint . complexToPoint) $ getPoints pData 50
-  -- where
-  --   printPoint (x, y) = printf "%s %s\n" (show x) (show y)
