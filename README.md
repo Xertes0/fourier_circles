@@ -1,6 +1,6 @@
 # Fourier Circles
 
-Drawing images using Fourier series.
+Draw images using Fourier series.
 
 ![Animation of drawing a Greek lambda with
 circles.](./images/demo.gif)
