@@ -6,7 +6,7 @@ import Graphics.Gloss
 import GHC.Float
 
 windowWidth :: Float
-windowWidth = 1280
+windowWidth = 1000
 
 windowHeight :: Float
 windowHeight = 1000
@@ -27,13 +27,22 @@ stringToPair str = (read a, read $ tail b)
   where
     (a, b) = break (== ' ') str
 
-readPoints :: FilePath -> IO PointsData
-readPoints path =
-  (\content ->
-     PointsData
-       {points = map stringToPair $ tail content, step = read $ head content})
-    . lines
-    <$> readFile path
+normalizePoints :: [(Double, Double)] -> [(Double, Double)]
+normalizePoints ps = zip (map normalize xs) (map normalize ys)
+  where
+    (xs, ys) = unzip ps
+    maxVal = max (maximum xs) (maximum ys)
+    minVal = min (minimum xs) (minimum ys)
+    normalize val = (val - minVal) / (maxVal - minVal)
+
+parsePointsData :: String -> PointsData
+parsePointsData str =
+  PointsData
+    { points = normalizePoints $ map stringToPair $ tail content
+    , step = read $ head content
+    }
+  where
+    content = lines str
 
 getC :: PointsData -> Int -> Complex Double
 getC pData 0 =
@@ -80,7 +89,7 @@ getPoints pData cache count = [f i | i <- [0 .. length (points pData) - 1]]
 
 -- Actual count is this * 2 + 1
 circleCount :: Int
-circleCount = 50
+circleCount = 250
 
 arrow :: Picture
 arrow =
@@ -91,8 +100,8 @@ vecAngle (x, y) = atan2 x y * 180 / pi
 
 doAnimate :: PointsData -> [(Float, Float)] -> CCache -> Float -> Picture
 doAnimate pData ps cache time =
-  scale 0.6 0.6
-    $ translate (-windowWidth / 2) (-windowHeight / 2 - 200)
+  scale (windowWidth / 2) (windowHeight / 2)
+    $ translate (-0.5) (-0.5)
     $ pictures (arrows ++ circles ++ [pointsPic])
   where
     i = min (round (time * 50)) $ length (points pData) - 1
@@ -128,13 +137,18 @@ doAnimate pData ps cache time =
 
 main :: IO ()
 main = do
-  pData <- readPoints "./helpers/points.txt"
+  putStrLn
+    "This application expects the output from \"path_to_points.html\" to be provided in stdin."
+  pData <- parsePointsData <$> getContents
   let cache = buildCCache pData circleCount
   let ps =
-        (\(x, y) -> (double2Float x, double2Float y))
-          . complexToPoint
+        (\(x, y) -> (double2Float x, double2Float y)) . complexToPoint
           <$> getPoints pData cache circleCount
   animate
-    (InWindow "Fourier series" (round windowWidth, round windowHeight) (100, 100))
+    (InWindow
+       "Fourier series"
+       (round windowWidth, round windowHeight)
+       ( 1920 `div` 2 - (round windowWidth `div` 2)
+       , 1080 `div` 2 - (round windowHeight `div` 2)))
     (makeColorI 0xe4 0xe4 0xe4 0xff)
     (doAnimate pData ps cache)
