@@ -5,6 +5,12 @@ import Data.List
 import Graphics.Gloss
 import GHC.Float
 
+windowWidth :: Float
+windowWidth = 1280
+
+windowHeight :: Float
+windowHeight = 1000
+
 data PointsData = PointsData
   { points :: [(Double, Double)]
   , step :: Double
@@ -84,9 +90,11 @@ vecAngle :: (Float, Float) -> Float
 vecAngle (x, y) = atan2 x y * 180 / pi
 
 doAnimate :: PointsData -> [(Float, Float)] -> CCache -> Float -> Picture
-doAnimate pData ps cache time = pictures (circles ++ arrows ++ [pointsPic])
+doAnimate pData ps cache time =
+  translate (-offsetX) (-offsetY) $ pictures (circles ++ arrows ++ [pointsPic])
   where
-    i = min (round (time * 50)) $ length (points pData)
+    i = min (round (time * 50)) $ length (points pData) - 1
+    (offsetX, offsetY) = ps !! i
     pointsPic = line $ take (i + 1) ps
     buildVec n = ((vecx', vecy'), vecLength)
       where
@@ -107,7 +115,11 @@ doAnimate pData ps cache time = pictures (circles ++ arrows ++ [pointsPic])
       tail
         $ zipWith
             (\((x1, y1), len) (x2, y2) ->
-               color (makeColor 0 0 0 0.5) $ translate x2 y2 $ scale len len $ rotate (vecAngle (x1, y1)) arrow) -- line [(x2, y2), (x1 + x2, y1 + y2)])
+               color (makeColor 0 0 0 0.8)
+                 $ translate x2 y2
+                 $ scale len len
+                 $ rotate (vecAngle (x1, y1)) arrow -- line [(x2, y2), (x1 + x2, y1 + y2)])
+             )
             vecs'
             posVecs
 
@@ -121,7 +133,7 @@ main = do
           . complexToPoint
           <$> getPoints pData cache circleCount
   animate
-    (InWindow "Fourier series" (1280, 1000) (100, 100))
+    (InWindow "Fourier series" (round windowWidth, round windowHeight) (100, 100))
     white
     (doAnimate pData ps cache)
   -- mapM_ (printPoint . complexToPoint) $ getPoints pData 50
