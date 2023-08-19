@@ -91,10 +91,12 @@ vecAngle (x, y) = atan2 x y * 180 / pi
 
 doAnimate :: PointsData -> [(Float, Float)] -> CCache -> Float -> Picture
 doAnimate pData ps cache time =
-  translate (-offsetX) (-offsetY) $ pictures (arrows ++ circles ++ [pointsPic])
+  scale 0.6 0.6
+    $ translate (-windowWidth / 2) (-windowHeight / 2 - 200)
+    $ pictures (arrows ++ circles ++ [pointsPic])
   where
     i = min (round (time * 50)) $ length (points pData) - 1
-    (offsetX, offsetY) = ps !! i
+    -- (offsetX, offsetY) = ps !! i
     pointsPic = color (makeColorI 0xd7 0x00 0x00 0xff) $ line $ take (i + 1) ps
     buildVec n = ((vecx', vecy'), vecLength)
       where
@@ -120,10 +122,7 @@ doAnimate pData ps cache time =
                translate x2 y2
                  $ scale len len
                  $ rotate (vecAngle (x1, y1))
-                 $ color
-                     (makeColorI 0x1c 0x1c 0x1c 0xff)
-                     arrow
-             )
+                 $ color (makeColorI 0x1c 0x1c 0x1c 0xff) arrow)
             vecs'
             posVecs
 
