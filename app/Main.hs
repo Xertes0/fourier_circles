@@ -104,7 +104,7 @@ doAnimate pData ps cache time =
     $ translate (-0.5) (-0.5)
     $ pictures (arrows ++ circles ++ [pointsPic])
   where
-    i = min (round (time * 50)) $ length (points pData) - 1
+    i = min (round ((time - 1) * 50)) $ length (points pData) - 1
     -- (offsetX, offsetY) = ps !! i
     pointsPic = color (makeColorI 0xd7 0x00 0x00 0xff) $ line $ take (i + 1) ps
     buildVec n = ((vecx', vecy'), vecLength)
