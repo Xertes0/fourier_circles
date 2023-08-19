@@ -1,5 +1,5 @@
 cabal-version:      2.4
-name:               fourier-transform
+name:               fourier-series
 version:            0.1.0.0
 
 -- A short (one-line) description of the package.
@@ -21,7 +21,7 @@ maintainer:         stefanskipiotr15@gmail.com
 -- category:
 extra-source-files: LICENSE.txt
 
-executable fourier-transform
+executable fourier-series
     main-is:          Main.hs
 
     -- Modules included in this executable, other than Main.
