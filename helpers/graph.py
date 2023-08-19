@@ -4,8 +4,9 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
 
-f = open("points.txt", "r")
-_ = f.readline()
+f = open("output.txt", "r")
+# f = open("points.txt", "r")
+# _ = f.readline()
 
 xs, ys = [], []
 for line in f.readlines():
