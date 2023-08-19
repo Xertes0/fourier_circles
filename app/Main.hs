@@ -89,7 +89,7 @@ getPoints pData cache count = [f i | i <- [0 .. length (points pData) - 1]]
 
 -- Actual count is this * 2 + 1
 circleCount :: Int
-circleCount = 250
+circleCount = 125
 
 arrow :: Picture
 arrow =
